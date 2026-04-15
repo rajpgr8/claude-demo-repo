@@ -1,0 +1,140 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git status:*)",
+      "Bash(git branch:*)",
+      "Bash(git show:*)",
+      "Bash(git stash list:*)",
+      "Bash(kubectl get:*)",
+      "Bash(kubectl describe:*)",
+      "Bash(kubectl logs:*)",
+      "Bash(kubectl rollout history:*)",
+      "Bash(kubectl rollout status:*)",
+      "Bash(kubectl top:*)",
+      "Bash(kubectl exec:*)",
+      "Bash(kubectl apply -k:*)",
+      "Bash(kubectl scale:*)",
+      "Bash(kubectl rollout restart:*)",
+      "Bash(kubectl rollout undo:*)",
+      "Bash(kubectl patch:*)",
+      "Bash(kubectl set resources:*)",
+      "Bash(kubectl annotate:*)",
+      "Bash(terraform validate:*)",
+      "Bash(terraform plan:*)",
+      "Bash(terraform show:*)",
+      "Bash(terraform state list:*)",
+      "Bash(terraform state show:*)",
+      "Bash(terraform workspace:*)",
+      "Bash(terraform fmt:*)",
+      "Bash(gcloud logging read:*)",
+      "Bash(gcloud pubsub:*)",
+      "Bash(gcloud sql instances describe:*)",
+      "Bash(gcloud projects describe:*)",
+      "Bash(gcloud artifacts docker images list:*)",
+      "Bash(argocd app get:*)",
+      "Bash(argocd app list:*)",
+      "Bash(argocd app history:*)",
+      "Bash(argocd app sync:*)",
+      "Bash(argocd app rollback:*)",
+      "Bash(argocd app wait:*)",
+      "Bash(docker buildx build:*)",
+      "Bash(docker buildx ls:*)",
+      "Bash(skaffold dev:*)",
+      "Bash(skaffold run:*)",
+      "Bash(make test:*)",
+      "Bash(make lint:*)",
+      "Bash(make build:*)",
+      "Bash(uv run:*)",
+      "Bash(uv add:*)",
+      "Bash(uv lock:*)",
+      "Bash(pip-audit:*)",
+      "Bash(hadolint:*)",
+      "Bash(trivy:*)",
+      "Bash(kustomize:*)",
+      "Bash(helm template:*)",
+      "Bash(helm lint:*)",
+      "Bash(helm diff:*)",
+      "Bash(curl:*)",
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(cat:*)",
+      "Bash(ls:*)",
+      "Bash(echo:*)",
+      "Bash(jq:*)",
+      "Bash(yq:*)"
+    ],
+    "deny": [
+      "Bash(kubectl delete:*)",
+      "Bash(kubectl drain:*)",
+      "Bash(kubectl cordon:*)",
+      "Bash(kubectl taint:*)",
+      "Bash(terraform apply:*)",
+      "Bash(terraform destroy:*)",
+      "Bash(terraform state rm:*)",
+      "Bash(terraform state mv:*)",
+      "Bash(terraform force-unlock:*)",
+      "Bash(gcloud projects delete:*)",
+      "Bash(gcloud sql instances delete:*)",
+      "Bash(gcloud container clusters delete:*)",
+      "Bash(gcloud storage rm:*)",
+      "Bash(gsutil rm:*)",
+      "Bash(docker push:*)",
+      "Bash(rm -rf:*)",
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(git clean -fd:*)"
+    ]
+  },
+  "hooks": [
+    {
+      "matcher": "Write|Edit",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "if [[ \"$CLAUDE_FILE_PATHS\" =~ \\.py$ ]]; then uv run ruff format \"$CLAUDE_FILE_PATHS\" && uv run ruff check --fix \"$CLAUDE_FILE_PATHS\" 2>/dev/null || true; fi"
+        }
+      ]
+    },
+    {
+      "matcher": "Edit",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "if [[ \"$CLAUDE_FILE_PATHS\" =~ \\.py$ ]]; then uv run mypy \"$CLAUDE_FILE_PATHS\" --ignore-missing-imports 2>/dev/null | tail -5 || true; fi"
+        }
+      ]
+    },
+    {
+      "matcher": "Write|Edit",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "if [[ \"$CLAUDE_FILE_PATHS\" =~ \\.tf$ ]]; then terraform -chdir=$(dirname \"$CLAUDE_FILE_PATHS\") fmt \"$CLAUDE_FILE_PATHS\" 2>/dev/null || true; fi"
+        }
+      ]
+    },
+    {
+      "matcher": "Write|Edit",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "if [[ \"$CLAUDE_FILE_PATHS\" =~ \\.ya?ml$ ]] && [[ \"$CLAUDE_FILE_PATHS\" =~ k8s/ ]]; then kubectl apply --dry-run=client -f \"$CLAUDE_FILE_PATHS\" 2>&1 | tail -3 || true; fi"
+        }
+      ]
+    },
+    {
+      "matcher": "Write",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "if [[ \"$CLAUDE_FILE_PATHS\" =~ Dockerfile ]]; then hadolint \"$CLAUDE_FILE_PATHS\" 2>/dev/null | head -15 || echo 'hadolint not installed'; fi"
+        }
+      ]
+    }
+  ],
+  "model": "claude-sonnet-4-5",
+  "smallFastModel": "claude-haiku-4-5-20251001"
+}

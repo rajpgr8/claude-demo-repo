@@ -1,0 +1,24 @@
+# .claude — what to gitignore
+
+# Personal permission overrides — each engineer has their own
+.claude/settings.local.json
+
+# Session state files written by Claude Code
+.claude/.session*
+.claude/session-*
+
+# Auto-memory files (personal, not team-shared)
+# Remove this line if your team wants to share memory entries
+.claude/memory/auto-*.md
+
+# Local MCP server overrides (if you have a personal .mcp.json)
+# .mcp.json  <-- DO commit this — it's team config
+
+# EVERYTHING ELSE under .claude/ should be committed:
+# .claude/commands/    ✓ commit — team slash commands
+# .claude/rules/       ✓ commit — team coding rules
+# .claude/agents/      ✓ commit — team subagent personas
+# .claude/skills/      ✓ commit — team skills
+# .claude/settings.json ✓ commit — team permissions and hooks
+# CLAUDE.md            ✓ commit — project context
+# .mcp.json            ✓ commit — MCP server config
