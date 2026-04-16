@@ -268,9 +268,10 @@ This template is written for Python / FastAPI / GKE / GCP. To adapt it:
 4. The `description:` field controls auto-invocation — be specific about trigger phrases
 
 ---
+
+#### skills frontmatter examples:
 ```
-# frontmatter examples:
- 
+# arguments with hint — Prompting for Required Parameters
 arguments:
   - name: output_path
     hint: "Where should the file be saved? Provide a full path like /home/claude/report.md"
@@ -285,6 +286,7 @@ arguments:
     required: false
     default: "markdown"
 
+# allowed-tools — Restricting Tool Access
 allowed-tools:
   - create_file   # ✅ only write new files
   - view          # ✅ only read/check directories
