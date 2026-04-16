@@ -268,7 +268,29 @@ This template is written for Python / FastAPI / GKE / GCP. To adapt it:
 4. The `description:` field controls auto-invocation — be specific about trigger phrases
 
 ---
+```
+# frontmatter examples:
+ 
+arguments:
+  - name: output_path
+    hint: "Where should the file be saved? Provide a full path like /home/claude/report.md"
+    required: true
 
+  - name: content_topic
+    hint: "What should the file contain? Describe the content or paste it directly."
+    required: true
+
+  - name: file_format
+    hint: "What format? Options: markdown, plain text, JSON, YAML"
+    required: false
+    default: "markdown"
+
+allowed-tools:
+  - create_file   # ✅ only write new files
+  - view          # ✅ only read/check directories
+  # bash_tool     ❌ blocked → no shell commands (rm, mv, etc.)
+  # str_replace   ❌ blocked → no overwriting existing files****
+```
 ## Related Resources
 
 - [Claude Code Documentation](https://docs.claude.com/en/docs/claude-code/overview)
